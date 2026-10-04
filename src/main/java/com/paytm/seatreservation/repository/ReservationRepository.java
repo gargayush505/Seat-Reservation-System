@@ -72,6 +72,17 @@ public class ReservationRepository {
         return rows.stream().findFirst();
     }
 
+    public void ensureUserBookingRow(long showId, String userId) {
+        jdbc.update("""
+            MERGE INTO user_show_bookings b
+            USING (SELECT :showId show_id, :userId user_id FROM dual) s
+            ON (b.show_id=s.show_id AND b.user_id=s.user_id)
+            WHEN NOT MATCHED THEN INSERT(show_id,user_id,booked_count) VALUES(s.show_id,s.user_id,0)
+            """, new MapSqlParameterSource().addValue("showId",showId).addValue("userId",userId));
+        jdbc.queryForObject("SELECT booked_count FROM user_show_bookings WHERE show_id=:showId AND user_id=:userId FOR UPDATE",
+                new MapSqlParameterSource().addValue("showId",showId).addValue("userId",userId), Integer.class);
+    }
+
     public int incrementUserBooking(long showId, String userId, int count, int limit) {
         return jdbc.update("""
             MERGE INTO user_show_bookings b

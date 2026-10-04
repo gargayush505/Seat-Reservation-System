@@ -115,9 +115,12 @@ public class ReservationService {
         var r=rows.get(0);
         if (!r.userId().equals(userId)) throw new DomainException(HttpStatus.FORBIDDEN,"not_owner","Only the reservation owner can cancel");
         if ("CANCELLED".equals(r.status())) return ReservationRepository.toResponse(r,repo.reservationSeats(r.id()));
-        int changed=repo.cancelReservation(reservationId,r.showId(),userId);
-        if (changed != 1) return ReservationRepository.toResponse(r,repo.reservationSeats(r.id()));
         List<String> seats=repo.reservationSeats(reservationId);
+        // Lock the user/show booking row before changing reservation/seat state so
+        // cancellation and reservation use the same lock ordering and cannot deadlock.
+        repo.ensureUserBookingRow(r.showId(), userId);
+        int changed=repo.cancelReservation(reservationId,r.showId(),userId);
+        if (changed != 1) return ReservationRepository.toResponse(r,seats);
         repo.releaseSeats(reservationId);
         repo.decrementUserBooking(r.showId(),userId,seats.size());
         return new ReservationResponse(r.id(),r.showId(),r.userId(),seats,r.amount(),"CANCELLED");
