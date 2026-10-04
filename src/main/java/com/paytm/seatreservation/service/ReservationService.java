@@ -136,10 +136,10 @@ public class ReservationService {
     }
 
     private void metricConfirmed(int n) {
-        Counter.builder("reservations_confirmed_total").description("Confirmed seat reservations").register(metrics).increment();
+        Counter.builder("reservations_confirmed").description("Confirmed seat reservations").register(metrics).increment();
     }
     private void metricDeclined(String reason) {
-        Counter.builder("reservations_declined_total").tag("reason",reason)
+        Counter.builder("reservations_declined").tag("reason",reason)
                 .description("Reservation domain declines").register(metrics).increment();
     }
 
