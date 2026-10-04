@@ -2,9 +2,9 @@ services:
   oracle:
     image: gvenzl/oracle-free:23-slim-faststart
     environment:
-      ORACLE_PASSWORD: ${ORACLE_PASSWORD:-Oracle123}
-      APP_USER: ${DB_USERNAME:-SEAT_APP}
-      APP_USER_PASSWORD: ${DB_PASSWORD:-Oracle123}
+      ORACLE_PASSWORD: Oracle123
+      APP_USER: SYSTEM
+      APP_USER_PASSWORD: Oracle123
     ports:
       - "1522:1521"
     healthcheck:
@@ -18,10 +18,10 @@ services:
       oracle:
         condition: service_healthy
     environment:
-      DB_URL: jdbc:oracle:thin:@oracle:1521/FREEPDB1
-      DB_USERNAME: ${DB_USERNAME:-SEAT_APP}
-      DB_PASSWORD: ${DB_PASSWORD:-Oracle123}
-      ADMIN_TOKEN: ${ADMIN_TOKEN:-admin-local}
+      DB_URL: jdbc:oracle:thin:@oracle:1522/FREEPDB1
+      DB_USERNAME: SYSTEM
+      DB_PASSWORD: Oracle123
+      ADMIN_TOKEN: admin-local
       PORT: 8080
     ports:
       - "8080:8080"

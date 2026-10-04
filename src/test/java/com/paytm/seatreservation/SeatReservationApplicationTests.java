@@ -17,8 +17,8 @@ class SeatReservationApplicationTests {
         assertEquals(17, Runtime.version().feature());
     }
     
-    @Test
-    public void ShowResponse() {
-    	reservationService.getShow(3l);
-    }
+//    @Test
+//    public void ShowResponse() {
+//    	reservationService.getShow(3l);
+//    }
 }

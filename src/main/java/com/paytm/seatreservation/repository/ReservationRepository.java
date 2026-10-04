@@ -2,6 +2,9 @@ package com.paytm.seatreservation.repository;
 
 import com.paytm.seatreservation.dto.ReservationResponse;
 import com.paytm.seatreservation.dto.ShowResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -13,17 +16,21 @@ import java.util.UUID;
 @Repository
 public class ReservationRepository {
     private final NamedParameterJdbcTemplate jdbc;
-
+    private static final Logger logger = LoggerFactory.getLogger(ReservationRepository.class);
+    
     public ReservationRepository(NamedParameterJdbcTemplate jdbc) { this.jdbc = jdbc; }
 
     // Oracle's RETURNING INTO is not supported by NamedParameterJdbcTemplate in a portable way.
     public long createShowAndReturnId(String name, long pricePaise, int limit) {
+    	logger.info("I am in createShowAndReturnId method");
         long id = jdbc.queryForObject("SELECT show_seq.NEXTVAL FROM dual", new MapSqlParameterSource(), Long.class);
+        logger.info("show id by dual: "+ id);
         jdbc.update("""
             INSERT INTO shows(show_id, show_name, show_price_paise, show_per_user_limit)
             VALUES (:id, :name, :price, :lim)
             """, new MapSqlParameterSource().addValue("id",id).addValue("name", name)
                 .addValue("price", pricePaise).addValue("lim", limit));
+        logger.info("After Insertion query is executed");
         return id;
     }
 
