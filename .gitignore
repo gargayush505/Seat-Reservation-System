@@ -1,0 +1,7 @@
+target/
+.metadata/
+.settings/
+*.log
+.env
+.idea/
+.vscode/

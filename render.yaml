@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: seat-reservation
+    runtime: docker
+    plan: free
+    healthCheckPath: /actuator/health/readiness
+    envVars:
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: ADMIN_TOKEN
+        sync: false
+      - key: DB_POOL_SIZE
+        value: "20"
